@@ -57,7 +57,7 @@ after restoring. Pause keyword listening before changing microphone settings.
 Create a Windows shortcut in your user Startup folder targeting the absolute
 path to `.venv\Scripts\pythonw.exe`, with the absolute path to `app.py` followed
 by `--background` as its arguments. Set its working directory to the app folder.
-Enable **Settings â†’ Enable keyword listening when the app starts** and save.
+Enable **Settings Ã¢â€ â€™ Enable keyword listening when the app starts** and save.
 Ollama must also run at sign-in for rewriting. Closing the app window hides it;
 the tray menu's Quit action exits it.
 
@@ -77,8 +77,8 @@ Ignored personal files remain local. GitHub receives future changes only when
 you push; this is not an automatic continuous backup. Keep a separate private
 disk backup of `config.json` if you want to preserve custom styles/preferences.
 
-Bundled fonts retain their original OFL license files in `assets/`. No general
-open-source license is granted for this private application by this backup.
+Bundled fonts retain their original OFL license files in `assets/`. The repository is public for viewing and backup. No general open-source
+license is granted for the application; bundled fonts retain their own licenses.
 
 ## Optional integration checks
 
