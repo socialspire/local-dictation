@@ -1,0 +1,24 @@
+# Local environment, model caches and personal preferences
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+config.json
+config.json.tmp
+*.log
+*.wav
+*.mp3
+*.mp4
+models/
+.cache/
+backup-*/
+# Generated design experiments and test results
+design-*.png
+design-preview-qa.html
+qa_design.cjs
+qa-*.png
+qa-*.json
+orbital-live-render-check.png

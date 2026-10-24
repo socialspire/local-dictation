@@ -1,0 +1,42 @@
+{
+  "whisper_model": "large-v3-turbo",
+  "compute_type": "int8_float16",
+  "language": "en",
+  "input_device": null,
+  "cleanup": true,
+  "cleanup_model": "qwen3:4b-instruct",
+  "cleanup_num_ctx": 4096,
+  "ollama_url": "http://127.0.0.1:11434",
+  "cleanup_timeout": 45,
+  "hotkey_label": "Ctrl+Alt+Space",
+  "hotkey_vk": 32,
+  "hotkey_modifier_vks": [
+    17,
+    18
+  ],
+  "vocabulary": [],
+  "styles": [
+    {
+      "name": "Casual",
+      "keyword": "atlas",
+      "instructions": "Preserve the speaker's natural voice and wording. Remove fillers and fix punctuation."
+    },
+    {
+      "name": "Gmail",
+      "keyword": "inbox",
+      "instructions": "Format as a clear, polished email with short paragraphs. Preserve any dictated greeting and sign-off. Never invent a recipient, signature, subject, or facts."
+    },
+    {
+      "name": "Prompt engineering",
+      "keyword": "builder",
+      "instructions": "Organize the dictated request into a clear prompt. Use instructions, context, and constraints only when present. Do not answer the prompt or invent requirements."
+    }
+  ],
+  "default_style": "Casual",
+  "silence_seconds": 5.0,
+  "silence_enabled": true,
+  "voice_stop": true,
+  "noise_floor": 0.012,
+  "listen_on_startup": false,
+  "probe_interval": 0.4
+}
