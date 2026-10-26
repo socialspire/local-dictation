@@ -1,4 +1,4 @@
-"""Local Dictation: native Windows UI, audio worker, and global controls."""
+"""SocialSpire Dictation: native Windows UI, audio worker, and global controls."""
 import copy
 import ctypes
 from ctypes import wintypes
@@ -55,13 +55,13 @@ def paste(text, target):
     return True
 
 
-def tray_image(color='#7781f4'):
-    image = Image.new('RGBA', (64, 64))
+def tray_image(color='#EC3013'):
+    """SocialSpire mark on ink: four bars (under 40px), tallest takes the state color."""
+    image = Image.new('RGBA', (64, 64), '#201E1D')
     draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((2, 2, 62, 62), radius=18, fill=color)
-    draw.rounded_rectangle((25, 12, 39, 39), radius=7, fill='white')
-    draw.arc((18, 25, 46, 47), 0, 180, fill='white', width=3)
-    draw.line((32, 47, 32, 54), fill='white', width=3)
+    for i, height in enumerate((10, 17, 29, 50)):
+        x = 6 + i * 14
+        draw.rectangle((x, 58 - height, x + 9, 58), fill=color if i == 3 else '#F3F2F2')
     return image
 
 
@@ -377,10 +377,10 @@ class App:
         self.root = tk.Tk()
         if background:
             self.root.withdraw()
-        self.root.title('Local Dictation')
+        self.root.title('SocialSpire Dictation')
         self.root.geometry('920x780')
         self.root.minsize(820, 700)
-        self.root.configure(bg='#10131c')
+        self.root.configure(bg='#201E1D')
         self.events = queue.Queue()
         self.worker = Worker(copy.deepcopy(self.cfg), self.events)
         self.status = tk.StringVar(value='Loading local speech model…')
@@ -389,7 +389,7 @@ class App:
         self.duration = tk.StringVar(value='0:00')
         self.selected = None
         self.build()
-        self.tray = pystray.Icon('local-dictation', tray_image('#b88938'), 'Local Dictation', pystray.Menu(
+        self.tray = pystray.Icon('socialspire-dictation', tray_image('#AE1800'), 'SocialSpire Dictation', pystray.Menu(
             pystray.MenuItem('Open settings', lambda: self.events.put(('show', None)), default=True),
             pystray.MenuItem('Keyword listening', lambda: self.send('arm', not self.worker.armed),
                             checked=lambda _: self.worker.armed),
@@ -416,7 +416,7 @@ class App:
         ttk.Entry(fields, textvariable=self.name, width=32).grid(row=1, column=0, sticky='ew')
         ttk.Entry(fields, textvariable=self.keyword, width=32).grid(row=1, column=1, sticky='ew', padx=14)
         ttk.Label(styles_tab, text='How should this style rewrite your speech?').pack(anchor='w')
-        self.instructions = tk.Text(styles_tab, height=4, wrap='word', bg='#0c0b09', fg='white', insertbackground='white', font=('Space Grotesk', 11), relief='flat', padx=10, pady=8)
+        self.instructions = tk.Text(styles_tab, height=4, wrap='word', bg='#2A2827', fg='#F3F2F2', insertbackground='#FF6244', font=('Archivo', 11), relief='flat', padx=10, pady=8)
         self.instructions.pack(fill='both', expand=True, pady=6)
         buttons = ttk.Frame(styles_tab); buttons.pack(side='bottom', fill='x')
         ttk.Button(buttons, text='New style', command=self.new_style).pack(side='left')
@@ -428,7 +428,7 @@ class App:
         row = ttk.Frame(settings); row.pack(fill='x', pady=6)
         self.mic = ttk.Combobox(row, state='readonly', width=68); self.mic.pack(side='left', fill='x', expand=True)
         ttk.Button(row, text='Refresh', command=self.refresh_mics).pack(side='right', padx=8)
-        ttk.Label(settings, text='Connect AirPods before refreshing. Choose their Hands-Free / microphone input.', foreground='#96938b').pack(anchor='w')
+        ttk.Label(settings, text='Connect AirPods before refreshing. Choose their Hands-Free / microphone input.', foreground='#A09E9D').pack(anchor='w')
         self.start_listening = tk.BooleanVar(value=self.cfg.get('listen_on_startup', False))
         ttk.Checkbutton(settings, text='Enable keyword listening when the app starts', variable=self.start_listening).pack(anchor='w', pady=(8, 0))
         ttk.Label(settings, text='Default style for keyboard dictation').pack(anchor='w', pady=(18, 6))
@@ -448,7 +448,7 @@ class App:
         ttk.Entry(row, textvariable=self.noise, width=8).pack(side='left', padx=8)
         ttk.Button(settings, text='Save controls', command=self.save_controls).pack(anchor='e', pady=15)
         ttk.Label(result_tab, text='Only the latest result is kept in memory. Audio is never saved.').pack(anchor='w')
-        self.result = tk.Text(result_tab, wrap='word', bg='#0c0b09', fg='white', insertbackground='white', font=('Space Grotesk', 12), relief='flat', padx=12, pady=12)
+        self.result = tk.Text(result_tab, wrap='word', bg='#2A2827', fg='#F3F2F2', insertbackground='#FF6244', font=('Archivo', 12), relief='flat', padx=12, pady=12)
         self.result.pack(fill='both', expand=True, pady=10)
         ttk.Button(result_tab, text='Copy result', command=lambda: pyperclip.copy(self.result.get('1.0', 'end-1c'))).pack(side='bottom', anchor='e')
         self.result.pack_forget()
@@ -583,9 +583,9 @@ class App:
                 elif kind == 'level': self.orb_target = value
                 elif kind == 'armed': self.armed.set(value)
                 elif kind == 'mode':
-                    color = '#e8b75b' if value in ('hold', 'open', 'keyword') else '#8d682c'
+                    color = '#EC3013' if value in ('hold', 'open', 'keyword') else '#AE1800'
                     self.tray.icon = tray_image(color)
-                    self.tray.title = 'Local Dictation · ' + value
+                    self.tray.title = 'SocialSpire Dictation · ' + value
                     if value == 'idle': self.orb_target = 0
                 elif kind == 'duration': self.duration.set(f'{int(value)//60}:{int(value)%60:02}')
                 elif kind == 'result': self.result.delete('1.0', 'end'); self.result.insert('1.0', value)
@@ -611,6 +611,6 @@ if __name__ == '__main__':
     ctypes.windll.kernel32.CreateMutexW.restype = wintypes.HANDLE
     mutex = ctypes.windll.kernel32.CreateMutexW(None, False, 'Local\\ConnerDictation')
     if ctypes.windll.kernel32.GetLastError() == 183:
-        ctypes.windll.user32.MessageBoxW(None, 'Local Dictation is already running. Open it from the system tray.', 'Local Dictation', 0)
+        ctypes.windll.user32.MessageBoxW(None, 'SocialSpire Dictation is already running. Open it from the system tray.', 'SocialSpire Dictation', 0)
     else:
         App(background='--background' in sys.argv).run()

@@ -1,11 +1,16 @@
-# Local Dictation
+# SocialSpire Dictation
+
+Rebranded 2026-10-26 from "Local Dictation" with the SocialSpire brand pack
+(`context/branding/`): ink field, red accent, Archivo, bars + wordmark header,
+red/ground orb, `socialspire-dictation.ico`.
 
 A personal Windows dictation application. Speech recognition, keyword detection,
 and rewriting run on this PC. English core version, 2026-10-24.
 
 ## Launch
 
-Double-click `start.bat` or the **Local Dictation** desktop shortcut.
+Double-click the **SocialSpire Dictation** shortcut on the Desktop, or search it
+from the Start menu. `start.bat` still works.
 The window can be hidden to the system tray. Close hides it; **Quit** exits.
 Keyword listening starts ON. A Windows Startup shortcut launches the app hidden in the tray at user sign-in. Open settings from its tray icon. If AirPods are disconnected, it waits and retries automatically every three seconds. You can pause listening from the tray menu.
 
@@ -109,7 +114,7 @@ and [Qwen3 4B Instruct](https://ollama.com/library/qwen3:4b-instruct).
 
 ## Background startup and latency changes
 
-The user Startup folder contains `Local Dictation.lnk`, pointing to this app with
+The user Startup folder contains `SocialSpire Dictation.lnk`, pointing to this app with
 `--background`. This starts at Windows user sign-in, not before login. Remove that
 shortcut to disable auto-launch. `listen_on_startup` controls automatic microphone
 listening, and can be changed in Settings. Ollama already has its own

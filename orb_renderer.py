@@ -1,5 +1,8 @@
 """Procedural Orbital preview geometry, driven by the real audio envelope."""
 import math
+
+# SocialSpire palette: ink field, ground particles, red rings and core.
+INK, GROUND, RED, RED_LIGHT = (32, 30, 29), (243, 242, 242), (236, 48, 19), (255, 98, 68)
 import numpy as np
 from PIL import Image, ImageDraw, ImageChops
 
@@ -28,7 +31,7 @@ class OrbRenderer:
         y, x = np.mgrid[-1:1:256j, -1:1:256j]
         d = np.sqrt(x*x+y*y)
         stops = [0, .13, .4, 1]
-        colors = [(242,232,177), (178,147,62), (49,29,4), (0,0,0)]
+        colors = [(243,200,190), (200,40,16), (60,12,4), (0,0,0)]
         rgb = np.stack([np.interp(d, stops, [c[k] for c in colors]) for k in range(3)],axis=-1)
         self.glow = Image.fromarray(rgb.astype('uint8'))
 
@@ -45,7 +48,7 @@ class OrbRenderer:
         self.waves=[wave for wave in self.waves if t-wave[0]<1.15]
         if not enabled or processing:
             self.waves.clear()
-        image = Image.new('RGB', (size,size))
+        image = Image.new('RGB', (size,size), INK)
         draw = ImageDraw.Draw(image)
         center = size/2
         radius = size*.29*(1+level*.14)
@@ -59,7 +62,8 @@ class OrbRenderer:
             return center+xx*p*radius,center+yy*p*radius,depth
 
         def color(rgb, alpha):
-            return tuple(int(v*max(0,min(1,alpha))) for v in rgb)
+            a = max(0, min(1, alpha))
+            return tuple(int(b+(v-b)*a) for v, b in zip(rgb, INK))
 
         for j in range(19):
             lat=-1+(j+1)/10; rr=math.sqrt(max(0,1-lat*lat)); points=[]
@@ -68,13 +72,13 @@ class OrbRenderer:
                 n=1+.008*math.sin(a*11+j+t*.4)+level*.07*math.sin(a*19-t*3)
                 p=project(math.cos(a)*rr*n,lat+math.sin(a*7+t+j)*.015,math.sin(a)*rr*n)
                 points.append(p[:2])
-            draw.line(points,fill=color((221,142,39),.08+level*.25))
+            draw.line(points,fill=color(RED,.10+level*.25))
         for x,y,z,seed in NODES:
             drift=1+.006*math.sin(t*.4+seed)+level*(.07+.11*math.sin(seed+t*4))
             px,py,depth=project(x*drift,y*drift,z*drift)
             front=max(0,min(1,(depth+1)/2))
             flicker=.85+.15*math.sin(seed*9+t*(.3+level*3))
-            col=color((255,151+front*60,48+front*65),(.10+front*.48+level*.4)*flicker)
+            col=color(GROUND,(.10+front*.48+level*.4)*flicker)
             sz=(.5+front*.7)*(1+level*.8)
             draw.ellipse((px,py,px+sz,py+sz),fill=col)
         for j in range(3):
@@ -85,11 +89,11 @@ class OrbRenderer:
                 x,y=math.cos(a)*rad,math.sin(a)*rad*(.45+j*.18)
                 return center+x*cr-y*sr,center+x*sr+y*cr
             points=[ring(.2+j+k/160*5.4) for k in range(161)]
-            draw.line(points,fill=color((244,185,83),.3+level*.3))
+            draw.line(points,fill=color(RED,.45+level*.35))
             for k in range(3):
                 x,y=ring(t*(.3+j*.08)+k*TAU/3)
                 r=1.2+level
-                draw.ellipse((x-r,y-r,x+r,y+r),fill=(255,231,166))
+                draw.ellipse((x-r,y-r,x+r,y+r),fill=GROUND)
         core=radius*(.10+level*.23+math.sin(t*1.2)*.003)
         extent=max(4,int(core*5.6))
         glow_layer=Image.new('RGB',(size,size))
@@ -101,11 +105,11 @@ class OrbRenderer:
             for k in range(71):
                 a=k/70*TAU; r=core*(1+.22*math.sin(a*3+t*2+j))
                 points.append((center+math.cos(a)*r,center+math.sin(a)*r*.75))
-            draw.line(points,fill=color((255,206,92),.16+j*.018))
+            draw.line(points,fill=color(RED_LIGHT,.16+j*.018))
         for born,strength in self.waves:
             phase=(t-born)/1.15
             r=size*(.285+phase*.195)
-            col=color((255,202,105),strength*(1-phase)**1.5*.85)
+            col=color(RED_LIGHT,strength*(1-phase)**1.5*.85)
             # Open concentric arcs evoke a radio transmission around the sphere.
             for start,end in ((-65,65),(115,245)):
                 draw.arc((center-r,center-r,center+r,center+r),start,end,fill=col,width=2)
